@@ -16,9 +16,7 @@ export class DashboardComponent {
   activeTab = signal<string>('sales');
 
   // ── ON DUTY ──
-  currentStaff = signal<Staff | null>(
-    JSON.parse(localStorage.getItem('loggedInStaff') || 'null')
-  );
+  currentStaff = computed(() => this.cartService.currentStaff());
 
   // ── NEW ORDER ──
   orderStep = signal<number>(1);
@@ -49,16 +47,18 @@ export class DashboardComponent {
     const map = new Map<string, { name: string; qty: number; total: number; image: string }>();
     orders.forEach(order => {
       order.items.forEach(entry => {
-        const existing = map.get(entry.item.name);
+        const existing = map.get(entry.name);
         if (existing) {
           existing.qty += entry.quantity;
-          existing.total += entry.item.price * entry.quantity;
+          existing.total += entry.price * entry.quantity;
         } else {
-          map.set(entry.item.name, {
-            name: entry.item.name,
+          // Look up the menu item to grab its image, since the order itself only stores name/price
+          const menuMatch = this.cartService.menuItems().find(m => m.name === entry.name);
+          map.set(entry.name, {
+            name: entry.name,
             qty: entry.quantity,
-            total: entry.item.price * entry.quantity,
-            image: entry.item.image
+            total: entry.price * entry.quantity,
+            image: menuMatch?.image ?? ''
           });
         }
       });
@@ -108,6 +108,7 @@ export class DashboardComponent {
   seeOrder(): void {
     this.activeTab.set('orders');
   }
+
   // ── MENU METHODS ──
   startAddItem(): void {
     this.newItem.set({ name: '', price: 0, category: '', description: '', image: '' });
@@ -124,22 +125,18 @@ export class DashboardComponent {
   saveItem(): void {
     const item = this.newItem();
     if (!item.name || !item.price || !item.category) return;
+
     if (this.editingItem()) {
-      this.cartService.menuItems.set(
-        this.cartService.menuItems().map(m =>
-          m.id === this.editingItem()!.id ? { ...m, ...item } as MenuItem : m
-        )
-      );
+      this.cartService.updateMenuItem({ ...this.editingItem()!, ...item } as MenuItem);
     } else {
-      const newId = Math.max(...this.cartService.menuItems().map(m => m.id)) + 1;
-      this.cartService.menuItems.set([...this.cartService.menuItems(), { id: newId, ...item } as MenuItem]);
+      this.cartService.addMenuItem(item as Omit<MenuItem, '_id'>);
     }
     this.showMenuForm.set(false);
     this.editingItem.set(null);
   }
 
-  deleteItem(itemId: number): void {
-    this.cartService.menuItems.set(this.cartService.menuItems().filter(m => m.id !== itemId));
+  deleteItem(itemId: string): void {
+    this.cartService.removeMenuItem(itemId);
   }
 
   cancelMenuForm(): void {
@@ -170,7 +167,7 @@ export class DashboardComponent {
     if (this.editingStaff()) {
       this.cartService.updateStaff({ ...this.editingStaff()!, ...staff } as Staff);
     } else {
-      this.cartService.addStaff(staff as Omit<Staff, 'id'>);
+      this.cartService.addStaff(staff as Omit<Staff, '_id'>);
     }
     this.showStaffForm.set(false);
     this.editingStaff.set(null);
@@ -186,7 +183,7 @@ export class DashboardComponent {
   }
 
   logout(): void {
-    localStorage.removeItem('loggedInStaff');
+    this.cartService.logoutStaff();
     this.router.navigate(['/']);
   }
 }

@@ -1,7 +1,8 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 export interface MenuItem {
-  id: number;
+  _id: string;
   name: string;
   price: number;
   category: string;
@@ -15,16 +16,21 @@ export interface CartItem {
 }
 
 export interface CompletedOrder {
-  id: number;
-  items: CartItem[];
+  _id: string;
+  items: {
+    item: string;
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
   total: number;
   transactionMode: string;
   paymentMode: string;
-  timestamp: Date;
+  timestamp: string;
 }
 
 export interface Staff {
-  id: number;
+  _id: string;
   staffCode: string;
   name: string;
   role: 'Employee' | 'Admin';
@@ -35,15 +41,20 @@ export interface Staff {
 }
 
 export interface KioskSettings {
+  _id?: string;
   kioskName: string;
   transactionModes: string[];
   paymentModes: string[];
 }
 
+const API_URL = 'http://localhost:3000/api';
+
 @Injectable({
   providedIn: 'root'
 })
 export class CartServices {
+
+  private http = inject(HttpClient);
 
   // ── SETTINGS ──
   kioskSettings = signal<KioskSettings>({
@@ -53,45 +64,7 @@ export class CartServices {
   });
 
   // ── MENU ITEMS ──
-  menuItems = signal<MenuItem[]>([
-    { id: 1,  name: 'Wings & Rice 2pcs',                  price: 90,  category: 'Wings & Rice',   description: '2 pcs chicken wings with steamed rice',        image: 'wings-rice.jpg' },
-    { id: 2,  name: 'Wings & Rice 3pcs',                  price: 110, category: 'Wings & Rice',   description: '3 pcs chicken wings with steamed rice',        image: 'wings-rice.jpg' },
-    { id: 3,  name: 'Wings & Fries 2pcs',                 price: 100, category: 'Wings & Fries',  description: '2 pcs chicken wings with fries',               image: 'wingsfries.png' },
-    { id: 4,  name: 'Wings & Fries 3pcs',                 price: 120, category: 'Wings & Fries',  description: '3 pcs chicken wings with fries',               image: 'wingsfries.png' },
-    { id: 5,  name: 'Wings & Fries 4pcs',                 price: 125, category: 'Wings & Fries',  description: '4 pcs chicken wings with fries',               image: 'wingsfries.png' },
-    { id: 6,  name: 'Wings & Fries 5pcs',                 price: 140, category: 'Wings & Fries',  description: '5 pcs chicken wings with fries',               image: 'wingsfries.png' },
-    { id: 7,  name: 'Wings & Rice w/ Gravy 2pcs',         price: 80,  category: 'Wings & Gravy',  description: '2 pcs chicken wings with rice and gravy',      image: 'wings-gravy.png' },
-    { id: 8,  name: 'Wings & Rice w/ Gravy 3pcs',         price: 90,  category: 'Wings & Gravy',  description: '3 pcs chicken wings with rice and gravy',      image: 'wings-gravy2.png' },
-    { id: 9,  name: 'Wings & Rice w/ Drinks',             price: 175, category: 'Wings & Drinks', description: 'Chicken wings with plain rice and drinks',     image: 'wings-rice-drinks.png' },
-    { id: 10, name: 'Combo 1',                            price: 180, category: 'Combos',         description: '6 pcs chicken only (2 flavor of choice)',      image: 'combo1.png' },
-    { id: 11, name: 'Combo 2',                            price: 240, category: 'Combos',         description: '8 pcs chicken only (flavor of choice)',        image: 'combo2.png' },
-    { id: 12, name: 'Combo 3',                            price: 154, category: 'Combos',         description: '2 pcs chicken with cheese hotdog',             image: 'combo2.png' },
-    { id: 13, name: 'Fries Small',                        price: 50,  category: 'Fries',          description: 'Small fries — Cheese, Sour Cream, or BBQ',    image: 'fries.jpg' },
-    { id: 14, name: 'Fries Medium',                       price: 60,  category: 'Fries',          description: 'Medium fries — Cheese, Sour Cream, or BBQ',   image: 'fries.jpg' },
-    { id: 15, name: 'Fries Large',                        price: 80,  category: 'Fries',          description: 'Large fries — Cheese, Sour Cream, or BBQ',    image: 'fries.jpg' },
-    { id: 16, name: 'Mozzarella Corndog',                 price: 100, category: 'Corndog',        description: 'Chut Chut style mozzarella corndog',           image: 'corndog.jpg' },
-    { id: 17, name: 'Cheese Hotdog Corndog',              price: 85,  category: 'Corndog',        description: 'Chut Chut style cheese hotdog corndog',        image: 'corndog.jpg' },
-    { id: 18, name: 'Cone Twirl Vanilla',                 price: 25,  category: 'Chillers',       description: 'Soft serve vanilla cone twirl',                image: 'vanilla.jpg' },
-    { id: 19, name: 'Cone Twirl Chocolate',               price: 25,  category: 'Chillers',       description: 'Soft serve chocolate cone twirl',              image: 'chocolate.jpg' },
-    { id: 20, name: 'Cone Twirl Mix',                     price: 25,  category: 'Chillers',       description: 'Soft serve vanilla & chocolate mix',           image: 'mix.jpg' },
-    { id: 21, name: 'Strawberry Sundae',                  price: 40,  category: 'Chillers',       description: 'Creamy strawberry sundae twist',               image: 'sundaetwist.png' },
-    { id: 22, name: 'Blueberry Sundae',                   price: 40,  category: 'Chillers',       description: 'Creamy blueberry sundae twist',                image: 'sundaetwist.png' },
-    { id: 23, name: 'Caramel Sundae',                     price: 40,  category: 'Chillers',       description: 'Rich caramel sundae twist',                    image: 'sundaetwist.png' },
-    { id: 24, name: 'Crimson Sundae',                     price: 40,  category: 'Chillers',       description: 'Crimson flavor sundae twist',                  image: 'sundaetwist.png' },
-    { id: 25, name: 'Lemon Sundae',                       price: 40,  category: 'Chillers',       description: 'Refreshing lemon sundae twist',                image: 'lemonsundae.png' },
-    { id: 26, name: 'Giant Twirl Chocolate',              price: 35,  category: 'Chillers',       description: 'Large chocolate soft serve cone',              image: 'giantwirl.png' },
-    { id: 27, name: 'Giant Twirl Vanilla',                price: 35,  category: 'Chillers',       description: 'Large vanilla soft serve cone',                image: 'giantwirl.png' },
-    { id: 28, name: 'Giant Twirl Mix',                    price: 35,  category: 'Chillers',       description: 'Large vanilla & chocolate mix cone',           image: 'giantwirl.png' },
-    { id: 29, name: 'Soda Float 7UP',                     price: 50,  category: 'Chillers',       description: '7UP soda float with soft serve',               image: '7up.jpg' },
-    { id: 30, name: 'Soda Float Coke',                    price: 50,  category: 'Chillers',       description: 'Coke soda float with soft serve',              image: 'coke.jpg' },
-    { id: 31, name: 'Soda Float Royal',                   price: 50,  category: 'Chillers',       description: 'Royal soda float with soft serve',             image: 'royal.jpg' },
-    { id: 32, name: 'Chocolate Macchiato',                price: 55,  category: 'Chillers',       description: 'Chut Chut premium chocolate macchiato',        image: 'icedcoffee.png' },
-    { id: 33, name: 'Caramel Macchiato',                  price: 55,  category: 'Chillers',       description: 'Iced caramel macchiato',                       image: 'icedcoffee.png' },
-    { id: 34, name: 'French Vanilla',                     price: 55,  category: 'Chillers',       description: 'Chilled iced french vanilla',                  image: 'icedcoffee.png' },
-    { id: 35, name: "Sundae's Best Choco Crunkies",       price: 50,  category: 'Chillers',       description: 'Sundae overload with toppings',                image: 'choco.png' },
-    { id: 36, name: "Sundae's Best Caramel Nut Crunch",   price: 50,  category: 'Chillers',       description: 'Rocky road sundae with toppings',              image: 'caramel.png' },
-    { id: 37, name: "Sundae's Best Strawberry Crunch",    price: 50,  category: 'Chillers',       description: 'Graham pampig sundae with toppings',           image: 'strawberry.png' },
-  ]);
+  menuItems = signal<MenuItem[]>([]);
 
   // ── CART ──
   cartItems = signal<CartItem[]>([]);
@@ -120,11 +93,7 @@ export class CartServices {
   );
 
   // ── STAFF ──
-  staffList = signal<Staff[]>([
-    { id: 1, staffCode: 'EMP001', name: 'Juan Dela Cruz', role: 'Employee', contact: '09123456789', status: 'Active', dateAdded: '2026-06-01', password: 'juan2024'  },
-    { id: 2, staffCode: 'EMP002', name: 'Maria Santos',   role: 'Employee', contact: '09987654321', status: 'Active', dateAdded: '2026-06-01', password: 'maria2024' },
-    { id: 3, staffCode: 'ADM001', name: 'Rcp',          role: 'Admin',      contact: '',            status: 'Active', dateAdded: '2026-06-01', password: 'admin2024' },
-  ]);
+  staffList = signal<Staff[]>([]);
 
   // ── AUTH ──
   currentStaff = signal<Staff | null>(null);
@@ -132,18 +101,88 @@ export class CartServices {
   isLoggedIn = computed(() => this.currentStaff() !== null);
   isAdmin    = computed(() => this.currentStaff()?.role === 'Admin');
 
-  loginStaff(staffCode: string, password: string): { success: boolean; message: string } {
-    const match = this.staffList().find(
-      s =>
-        s.staffCode.toLowerCase() === staffCode.trim().toLowerCase() &&
-        s.password === password &&
-        s.status === 'Active'
-    );
-    if (!match) {
-      return { success: false, message: 'Invalid Staff ID or password.' };
+  constructor() {
+    this.loadMenuItems();
+    this.loadStaff();
+    this.loadOrders();
+    this.loadSettings();
+  }
+
+
+  // ── MENU METHODS ──
+    addMenuItem(item: Omit<MenuItem, '_id'>): void {
+      this.http.post<MenuItem>(`${API_URL}/menu`, item).subscribe({
+        next: (saved) => this.menuItems.set([...this.menuItems(), saved]),
+        error: (err) => console.error('Failed to add menu item:', err)
+      });
     }
-    this.currentStaff.set(match);
-    return { success: true, message: `Welcome, ${match.name}!` };
+
+    updateMenuItem(updatedItem: MenuItem): void {
+      this.http.put<MenuItem>(`${API_URL}/menu/${updatedItem._id}`, updatedItem).subscribe({
+        next: (saved) => {
+          this.menuItems.set(
+            this.menuItems().map(m => m._id === saved._id ? saved : m)
+          );
+        },
+        error: (err) => console.error('Failed to update menu item:', err)
+      });
+    }
+
+    removeMenuItem(itemId: string): void {
+      this.http.delete(`${API_URL}/menu/${itemId}`).subscribe({
+        next: () => this.menuItems.set(this.menuItems().filter(m => m._id !== itemId)),
+        error: (err) => console.error('Failed to remove menu item:', err)
+      });
+    }
+  loadMenuItems(): void {
+    this.http.get<MenuItem[]>(`${API_URL}/menu`).subscribe({
+      next: (items) => this.menuItems.set(items),
+      error: (err) => console.error('Failed to load menu items:', err)
+    });
+  }
+
+  loadStaff(): void {
+    this.http.get<Staff[]>(`${API_URL}/staff`).subscribe({
+      next: (staff) => this.staffList.set(staff),
+      error: (err) => console.error('Failed to load staff:', err)
+    });
+  }
+
+  loadOrders(): void {
+    this.http.get<CompletedOrder[]>(`${API_URL}/orders`).subscribe({
+      next: (orders) => this.completedOrders.set(orders),
+      error: (err) => console.error('Failed to load orders:', err)
+    });
+  }
+
+  loadSettings(): void {
+    this.http.get<KioskSettings>(`${API_URL}/settings`).subscribe({
+      next: (settings) => this.kioskSettings.set(settings),
+      error: (err) => console.error('Failed to load settings:', err)
+    });
+  }
+
+  // ── AUTH METHODS ──
+  loginStaff(staffCode: string, password: string): Promise<{ success: boolean; message: string }> {
+    return new Promise((resolve) => {
+      this.http.post<{ success: boolean; message: string; staff?: Staff }>(
+        `${API_URL}/staff/login`,
+        { staffCode, password }
+      ).subscribe({
+        next: (res) => {
+          if (res.success && res.staff) {
+            this.currentStaff.set(res.staff);
+          }
+          resolve({ success: res.success, message: res.message });
+        },
+        error: (err) => {
+          resolve({
+            success: false,
+            message: err.error?.message || 'Login failed. Please try again.'
+          });
+        }
+      });
+    });
   }
 
   logoutStaff(): void {
@@ -154,11 +193,11 @@ export class CartServices {
   // ── CART METHODS ──
   addToCart(item: MenuItem): void {
     const current  = this.cartItems();
-    const existing = current.find(entry => entry.item.id === item.id);
+    const existing = current.find(entry => entry.item._id === item._id);
     if (existing) {
       this.cartItems.set(
         current.map(entry =>
-          entry.item.id === item.id
+          entry.item._id === item._id
             ? { ...entry, quantity: entry.quantity + 1 }
             : entry
         )
@@ -168,8 +207,8 @@ export class CartServices {
     }
   }
 
-  removeFromCart(itemId: number): void {
-    this.cartItems.set(this.cartItems().filter(entry => entry.item.id !== itemId));
+  removeFromCart(itemId: string): void {
+    this.cartItems.set(this.cartItems().filter(entry => entry.item._id !== itemId));
   }
 
   clearCart(): void {
@@ -177,25 +216,41 @@ export class CartServices {
   }
 
   placeOrder(): void {
-    const newOrder: CompletedOrder = {
-      id: this.completedOrders().length + 1,
-      items: [...this.cartItems()],
+    const newOrder = {
+      items: this.cartItems().map(entry => ({
+        item: entry.item._id,
+        name: entry.item.name,
+        price: entry.item.price,
+        quantity: entry.quantity
+      })),
       total: this.cartTotal(),
       transactionMode: this.transactionMode(),
-      paymentMode: this.paymentMode(),
-      timestamp: new Date()
+      paymentMode: this.paymentMode()
     };
-    this.completedOrders.set([...this.completedOrders(), newOrder]);
-    this.cartItems.set([]);
+
+    this.http.post<CompletedOrder>(`${API_URL}/orders`, newOrder).subscribe({
+      next: (savedOrder) => {
+        this.completedOrders.set([...this.completedOrders(), savedOrder]);
+        this.cartItems.set([]);
+      },
+      error: (err) => console.error('Failed to place order:', err)
+    });
   }
-  
+
   // ── SETTINGS METHODS ──
   updateSettings(newSettings: Partial<KioskSettings>): void {
-    this.kioskSettings.set({ ...this.kioskSettings(), ...newSettings });
+    const updated = { ...this.kioskSettings(), ...newSettings };
+    this.http.put<KioskSettings>(`${API_URL}/settings`, updated).subscribe({
+      next: (saved) => this.kioskSettings.set(saved),
+      error: (err) => console.error('Failed to update settings:', err)
+    });
   }
 
   resetDailySales(): void {
-    this.completedOrders.set([]);
+    this.http.delete(`${API_URL}/orders`).subscribe({
+      next: () => this.completedOrders.set([]),
+      error: (err) => console.error('Failed to reset orders:', err)
+    });
   }
 
   toggleTransactionMode(mode: string): void {
@@ -215,18 +270,28 @@ export class CartServices {
   }
 
   // ── STAFF METHODS ──
-  addStaff(staff: Omit<Staff, 'id'>): void {
-    const newId = Math.max(...this.staffList().map(s => s.id), 0) + 1;
-    this.staffList.set([...this.staffList(), { id: newId, ...staff }]);
+  addStaff(staff: Omit<Staff, '_id'>): void {
+    this.http.post<Staff>(`${API_URL}/staff`, staff).subscribe({
+      next: (saved) => this.staffList.set([...this.staffList(), saved]),
+      error: (err) => console.error('Failed to add staff:', err)
+    });
   }
 
   updateStaff(updatedStaff: Staff): void {
-    this.staffList.set(
-      this.staffList().map(s => s.id === updatedStaff.id ? updatedStaff : s)
-    );
+    this.http.put<Staff>(`${API_URL}/staff/${updatedStaff._id}`, updatedStaff).subscribe({
+      next: (saved) => {
+        this.staffList.set(
+          this.staffList().map(s => s._id === saved._id ? saved : s)
+        );
+      },
+      error: (err) => console.error('Failed to update staff:', err)
+    });
   }
 
-  removeStaff(staffId: number): void {
-    this.staffList.set(this.staffList().filter(s => s.id !== staffId));
+  removeStaff(staffId: string): void {
+    this.http.delete(`${API_URL}/staff/${staffId}`).subscribe({
+      next: () => this.staffList.set(this.staffList().filter(s => s._id !== staffId)),
+      error: (err) => console.error('Failed to remove staff:', err)
+    });
   }
 }

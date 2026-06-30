@@ -38,16 +38,17 @@ export class AdminPanelComponent {
     const map = new Map<string, { name: string; qty: number; total: number; image: string }>();
     orders.forEach(order => {
       order.items.forEach(entry => {
-        const existing = map.get(entry.item.name);
+        const existing = map.get(entry.name);
         if (existing) {
           existing.qty += entry.quantity;
-          existing.total += entry.item.price * entry.quantity;
+          existing.total += entry.price * entry.quantity;
         } else {
-          map.set(entry.item.name, {
-            name: entry.item.name,
+          const menuMatch = this.cartService.menuItems().find(m => m.name === entry.name);
+          map.set(entry.name, {
+            name: entry.name,
             qty: entry.quantity,
-            total: entry.item.price * entry.quantity,
-            image: entry.item.image
+            total: entry.price * entry.quantity,
+            image: menuMatch?.image ?? ''
           });
         }
       });
@@ -124,29 +125,20 @@ export class AdminPanelComponent {
   saveItem(): void {
     const item = this.newItem();
     if (!item.name || !item.price || !item.category) return;
+
     if (this.editingItem()) {
-      this.cartService.menuItems.set(
-        this.cartService.menuItems().map(m =>
-          m.id === this.editingItem()!.id ? { ...m, ...item } as MenuItem : m
-        )
-      );
+      this.cartService.updateMenuItem({ ...this.editingItem()!, ...item } as MenuItem);
       this.showSuccess('Item updated!');
     } else {
-      const newId = Math.max(...this.cartService.menuItems().map(m => m.id)) + 1;
-      this.cartService.menuItems.set([
-        ...this.cartService.menuItems(),
-        { id: newId, ...item } as MenuItem
-      ]);
+      this.cartService.addMenuItem(item as Omit<MenuItem, '_id'>);
       this.showSuccess('Item added!');
     }
     this.showMenuForm.set(false);
     this.editingItem.set(null);
   }
 
-  deleteItem(itemId: number): void {
-    this.cartService.menuItems.set(
-      this.cartService.menuItems().filter(m => m.id !== itemId)
-    );
+  deleteItem(itemId: string): void {
+    this.cartService.removeMenuItem(itemId);
     this.showSuccess('Item deleted!');
   }
 
@@ -179,7 +171,7 @@ export class AdminPanelComponent {
       this.cartService.updateStaff({ ...this.editingStaff()!, ...staff } as Staff);
       this.showSuccess('Staff updated!');
     } else {
-      this.cartService.addStaff(staff as Omit<Staff, 'id'>);
+      this.cartService.addStaff(staff as Omit<Staff, '_id'>);
       this.showSuccess('Staff added!');
     }
     this.showStaffForm.set(false);
@@ -196,6 +188,7 @@ export class AdminPanelComponent {
   }
 
   logout(): void {
+    this.cartService.logoutStaff();
     this.router.navigate(['/']);
   }
 }

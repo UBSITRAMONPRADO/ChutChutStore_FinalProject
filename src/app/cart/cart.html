@@ -17,7 +17,7 @@
     </div>
   } @else {
     <div class="cart-items">
-      @for (entry of cartService.cartItems(); track entry.item.id) {
+      @for (entry of cartService.cartItems(); track entry.item._id) {
         <div class="cart-item">
           <img [src]="entry.item.image" [alt]="entry.item.name" class="cart-item-img" />
           <div class="cart-item-info">
@@ -26,7 +26,7 @@
           </div>
           <div class="cart-item-right">
             <span class="cart-item-total">₱{{ entry.item.price * entry.quantity }}</span>
-            <button class="remove-btn" (click)="cartService.removeFromCart(entry.item.id)">✕</button>
+            <button class="remove-btn" (click)="cartService.removeFromCart(entry.item._id)">✕</button>
           </div>
         </div>
       }

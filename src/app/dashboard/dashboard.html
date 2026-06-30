@@ -165,7 +165,7 @@
             </div>
 
             <div class="order-grid">
-              @for (item of filteredItems(); track item.id) {
+              @for (item of filteredItems(); track item._id) {
                 <div class="order-item-card" (click)="cartService.addToCart(item)">
                   <img [src]="item.image" [alt]="item.name" class="order-item-img" />
                   <div class="order-item-info">
@@ -188,14 +188,14 @@
               </div>
             } @else {
               <div class="order-cart-items">
-                @for (entry of cartService.cartItems(); track entry.item.id) {
+                @for (entry of cartService.cartItems(); track entry.item._id) {
                   <div class="order-cart-item">
                     <div class="order-cart-info">
                       <p class="order-cart-name">{{ entry.item.name }}</p>
                       <p class="order-cart-qty">x{{ entry.quantity }}</p>
                     </div>
                     <span class="order-cart-price">&#8369;{{ entry.item.price * entry.quantity }}</span>
-                    <button class="order-remove-btn" (click)="cartService.removeFromCart(entry.item.id)">✕</button>
+                    <button class="order-remove-btn" (click)="cartService.removeFromCart(entry.item._id)">✕</button>
                   </div>
                 }
               </div>
@@ -291,7 +291,7 @@
       }
 
       <div class="menu-grid">
-        @for (item of cartService.menuItems(); track item.id) {
+        @for (item of cartService.menuItems(); track item._id) {
           <div class="menu-card">
             <img [src]="item.image" [alt]="item.name" class="menu-card-img" />
             <div class="menu-card-info">
@@ -301,7 +301,7 @@
             </div>
             <div class="menu-card-actions">
               <button class="edit-btn" (click)="startEditItem(item)">✏️ Edit</button>
-              <button class="delete-btn" (click)="deleteItem(item.id)">🗑️ Delete</button>
+              <button class="delete-btn" (click)="deleteItem(item._id)">🗑️ Delete</button>
             </div>
           </div>
         }
@@ -378,7 +378,7 @@
           <span>Date Added</span>
           <span>Actions</span>
         </div>
-        @for (staff of cartService.staffList(); track staff.id) {
+        @for (staff of cartService.staffList(); track staff._id) {
           <div class="staff-table-row">
             <span class="staff-name">{{ staff.name }}</span>
             <span>
@@ -395,7 +395,7 @@
             <span class="staff-date">{{ staff.dateAdded }}</span>
             <span class="staff-actions">
               <button class="edit-btn" (click)="startEditStaff(staff)">✏️</button>
-              <button class="delete-btn" (click)="cartService.removeStaff(staff.id)">🗑️</button>
+              <button class="delete-btn" (click)="cartService.removeStaff(staff._id)">🗑️</button>
             </span>
           </div>
         }
@@ -415,17 +415,17 @@
           @if (cartService.completedOrders().length === 0) {
             <p class="empty-msg">No orders yet today.</p>
           } @else {
-            @for (order of cartService.completedOrders(); track order.id) {
+            @for (order of cartService.completedOrders(); track order._id; let i = $index) {
               <div class="order-card">
                 <div class="order-header">
-                  <span class="order-id">Order #{{ order.id }}</span>
+                  <span class="order-id">Order #{{ i + 1 }}</span>
                   <span class="badge yellow">{{ order.transactionMode }}</span>
                   <span class="badge red">{{ order.paymentMode }}</span>
                   <span class="order-total">₱{{ order.total }}</span>
                 </div>
                 <div class="order-items">
-                  @for (entry of order.items; track entry.item.id) {
-                    <span class="order-item-tag">{{ entry.item.name }} x{{ entry.quantity }}</span>
+                  @for (entry of order.items; track entry.item) {
+                    <span class="order-item-tag">{{ entry.name }} x{{ entry.quantity }}</span>
                   }
                 </div>
               </div>

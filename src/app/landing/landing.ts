@@ -19,34 +19,25 @@ export class LandingComponent {
   password = signal('');
   error    = signal('');
 
-  login(): void {
+  async login(): Promise<void> {
     this.error.set('');
-
+  
     if (!this.staffId().trim()) {
       this.error.set('Please enter your Staff ID.');
       return;
     }
-
     if (!this.password()) {
       this.error.set('Please enter your password.');
       return;
     }
-
-    const result = this.cartService.loginStaff(this.staffId(), this.password());
-
+  
+    const result = await this.cartService.loginStaff(this.staffId(), this.password());
+  
     if (!result.success) {
       this.error.set(result.message);
       return;
     }
-
-    // ── Save the logged-in staff for the On Duty badge ──
-    const staff = this.cartService.staffList().find(
-      s => String(s.id) === this.staffId().trim()
-    );
-    if (staff) {
-      localStorage.setItem('loggedInStaff', JSON.stringify(staff));
-    }
-
+  
     this.cartService.isAdmin()
       ? this.router.navigate(['/admin'])
       : this.router.navigate(['/dashboard']);

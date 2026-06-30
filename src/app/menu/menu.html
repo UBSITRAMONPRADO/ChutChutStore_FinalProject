@@ -20,7 +20,7 @@
       <p>{{ filteredItems().length }} items available</p>
     </div>
     <div class="menu-grid">
-      @for (item of filteredItems(); track item.id) {
+      @for (item of filteredItems(); track item._id) {
         <app-menu-item-card
           [item]="item"
           (addToCart)="handleAddToCart($event)">
@@ -39,7 +39,7 @@
       </div>
     } @else {
       <div class="cart-panel-items">
-        @for (entry of cartService.cartItems(); track entry.item.id) {
+        @for (entry of cartService.cartItems(); track entry.item._id) {
           <div class="cart-panel-item">
             <img [src]="entry.item.image" [alt]="entry.item.name" class="cart-panel-img" />
             <div class="cart-panel-info">
