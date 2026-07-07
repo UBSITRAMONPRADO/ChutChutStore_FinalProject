@@ -6,7 +6,11 @@
   },
   "newProjectRoot": "projects",
   "projects": {
+<<<<<<< HEAD
     "chutv4": {
+=======
+    "chutv2": {
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -56,10 +60,17 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
+<<<<<<< HEAD
               "buildTarget": "chutv4:build:production"
             },
             "development": {
               "buildTarget": "chutv4:build:development"
+=======
+              "buildTarget": "chutv2:build:production"
+            },
+            "development": {
+              "buildTarget": "chutv2:build:development"
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
             }
           },
           "defaultConfiguration": "development"

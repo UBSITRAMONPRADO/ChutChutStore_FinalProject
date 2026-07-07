@@ -21,7 +21,11 @@
     width: 140px;
     height: 140px;
     object-fit: contain;
+<<<<<<< HEAD
     border-radius: 25%;
+=======
+    border-radius: 50%;
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
     margin-bottom: 16px;
   }
   

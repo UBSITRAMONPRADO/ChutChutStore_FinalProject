@@ -11,13 +11,21 @@
 
     <div class="on-duty-badge">
       <div class="on-duty-dot-wrap">
+<<<<<<< HEAD
         <div class="on-duty-ring"></div>  
+=======
+        <div class="on-duty-ring"></div>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
         <div class="on-duty-dot"></div>
       </div>
       <div class="on-duty-info">
         <p class="on-duty-label">On Duty</p>
         <p class="on-duty-name">{{ currentStaff()?.name ?? 'Unknown' }}</p>
+<<<<<<< HEAD
         <p class="on-duty-role">{{ currentStaff()?.staffCode ?? '' }}</p>
+=======
+        <p class="on-duty-role">{{ currentStaff()?.role ?? '' }}</p>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
       </div>
     </div>
 
@@ -35,7 +43,14 @@
     <button class="tab-btn" [class.active]="activeTab() === 'menu'" (click)="activeTab.set('menu')">
       Menu
     </button>
+<<<<<<< HEAD
     <button class="tab-btn" [class.active]="activeTab() === 'orders'" (click)="activeTab.set('orders')">
+=======
+    <button class="tab-btn" [class.active]="activeTab() === 'staff'" (click)="activeTab.set('staff')">
+      Staff
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'OrdersList'" (click)="activeTab.set('orders')">
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
       OrdersList
     </button>
   </div>
@@ -109,7 +124,11 @@
       </div>
       <div class="reset-section">
         <button class="reset-btn" (click)="cartService.resetDailySales()">
+<<<<<<< HEAD
           Reset Daily Sales
+=======
+          🗑️ Reset Daily Sales
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
         </button>
       </div>
     </div>
@@ -191,7 +210,11 @@
                       <p class="order-cart-name">{{ entry.item.name }}</p>
                       <p class="order-cart-qty">x{{ entry.quantity }}</p>
                     </div>
+<<<<<<< HEAD
                     <span class="order-cart-price">₱{{ entry.item.price * entry.quantity }}</span>
+=======
+                    <span class="order-cart-price">&#8369;{{ entry.item.price * entry.quantity }}</span>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
                     <button class="order-remove-btn" (click)="cartService.removeFromCart(entry.item._id)">✕</button>
                   </div>
                 }
@@ -200,12 +223,20 @@
               <div class="order-cart-footer">
                 <div class="order-total-row">
                   <span>Total</span>
+<<<<<<< HEAD
                   <span class="order-total-amt">₱{{ cartService.cartTotal() }}</span>
+=======
+                  <span class="order-total-amt">&#8369;{{ cartService.cartTotal() }}</span>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
                 </div>
                 <p class="payment-label">Select Payment:</p>
                 <div class="payment-options">
                   <button class="payment-opt-btn" (click)="selectPayment('Cash')"><img src="cash.png" alt="Cash" class="icon-sm"></button>
+<<<<<<< HEAD
                   <button class="payment-opt-btn" (click)="selectPayment('Online Payment')"><img src="gcash-maya.jpg" alt="Gcash/Maya" class="icon-sm"></button>
+=======
+                  <button class="payment-opt-btn" (click)="selectPayment('Gcash/Maya')"><img src="gcash-maya.jpg" alt="Gcash/Maya" class="icon-sm"></button>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
                 </div>
                 <button class="clear-order-btn" (click)="cartService.clearCart()">🗑️ Clear</button>
               </div>
@@ -248,7 +279,11 @@
                 placeholder="Item name" />
             </div>
             <div class="form-group">
+<<<<<<< HEAD
               <label>Price (₱)</label>
+=======
+              <label>Price (&#8369;)</label>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
               <input type="number" class="form-input"
                 [value]="newItem().price"
                 (input)="updateNewItem('price', +$any($event.target).value)"
@@ -260,10 +295,17 @@
                 [value]="newItem().category"
                 (change)="updateNewItem('category', $any($event.target).value)">
                 <option value="">Select category</option>
+<<<<<<< HEAD
                 <option value="Wings & Rice">Wings & Rice</option>
                 <option value="Wings & Fries">Wings & Fries</option>
                 <option value="Wings & Gravy">Wings & Gravy</option>
                 <option value="Wings & Drinks">Wings & Drinks</option>
+=======
+                <option value="Wings & Rice">Wings &amp; Rice</option>
+                <option value="Wings & Fries">Wings &amp; Fries</option>
+                <option value="Wings & Gravy">Wings &amp; Gravy</option>
+                <option value="Wings & Drinks">Wings &amp; Drinks</option>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
                 <option value="Combos">Combos</option>
                 <option value="Fries">Fries</option>
                 <option value="Corndog">Corndog</option>
@@ -294,7 +336,11 @@
             <div class="menu-card-info">
               <p class="menu-card-name">{{ item.name }}</p>
               <p class="menu-card-cat">{{ item.category }}</p>
+<<<<<<< HEAD
               <p class="menu-card-price">₱{{ item.price }}</p>
+=======
+              <p class="menu-card-price">&#8369;{{ item.price }}</p>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
             </div>
             <div class="menu-card-actions">
               <button class="edit-btn" (click)="startEditItem(item)">✏️ Edit</button>
@@ -306,12 +352,110 @@
     </div>
   }
 
+<<<<<<< HEAD
+=======
+  <!-- STAFF TAB -->
+  @if (activeTab() === 'staff') {
+    <div class="tab-content">
+      <div class="section-header">
+        <h2>Staff Management</h2>
+        <button class="add-btn-primary" (click)="startAddStaff()">+ Add Staff</button>
+      </div>
+
+      @if (showStaffForm()) {
+        <div class="form-card">
+          <h3>{{ editingStaff() ? 'Edit Staff' : 'Add New Staff' }}</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" class="form-input"
+                [value]="newStaff().name"
+                (input)="updateNewStaff('name', $any($event.target).value)"
+                placeholder="Full name" />
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <select class="form-input"
+                [value]="newStaff().role"
+                (change)="updateNewStaff('role', $any($event.target).value)">
+                <option value="Cashier">Cashier</option>
+                <option value="Employee">Cook</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Contact Number</label>
+              <input type="text" class="form-input"
+                [value]="newStaff().contact"
+                (input)="updateNewStaff('contact', $any($event.target).value)"
+                placeholder="09XXXXXXXXX" />
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select class="form-input"
+                [value]="newStaff().status"
+                (change)="updateNewStaff('status', $any($event.target).value)">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date Added</label>
+              <input type="date" class="form-input"
+                [value]="newStaff().dateAdded"
+                (input)="updateNewStaff('dateAdded', $any($event.target).value)" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="cancel-btn" (click)="cancelStaffForm()">Cancel</button>
+            <button class="save-btn" (click)="saveStaff()">
+              {{ editingStaff() ? 'Save Changes' : 'Add Staff' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="staff-table">
+        <div class="staff-table-header">
+          <span>Name</span>
+          <span>Role</span>
+          <span>Contact</span>
+          <span>Status</span>
+          <span>Date Added</span>
+          <span>Actions</span>
+        </div>
+        @for (staff of cartService.staffList(); track staff._id) {
+          <div class="staff-table-row">
+            <span class="staff-name">{{ staff.name }}</span>
+            <span>
+              <span class="role-badge" [class.admin]="staff.role === 'Admin'">
+                {{ staff.role }}
+              </span>
+            </span>
+            <span class="staff-contact">{{ staff.contact }}</span>
+            <span>
+              <span class="status-badge" [class.inactive]="staff.status === 'Inactive'">
+                {{ staff.status }}
+              </span>
+            </span>
+            <span class="staff-date">{{ staff.dateAdded }}</span>
+            <span class="staff-actions">
+              <button class="edit-btn" (click)="startEditStaff(staff)">✏️</button>
+              <button class="delete-btn" (click)="cartService.removeStaff(staff._id)">🗑️</button>
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
   <!-- ORDERS TAB -->
   @if (activeTab() === 'orders') {
     <div class="tab-content">
       <div class="section-header">
         <h2>Orders List</h2>
       </div>
+<<<<<<< HEAD
 
       <div class="dashboard-grid">
 
@@ -339,10 +483,32 @@
                     ✓ Mark as Done
                   </button>
                 </div>
+=======
+      <div class="dashboard-grid">
+        <div class="dashboard-section">
+          <h2>📋 Orders Breakdown</h2>
+          @if (cartService.completedOrders().length === 0) {
+            <p class="empty-msg">No orders yet today.</p>
+          } @else {
+            @for (order of cartService.completedOrders(); track order._id; let i = $index) {
+              <div class="order-card">
+                <div class="order-header">
+                  <span class="order-id">Order #{{ i + 1 }}</span>
+                  <span class="badge yellow">{{ order.transactionMode }}</span>
+                  <span class="badge red">{{ order.paymentMode }}</span>
+                  <span class="order-total">₱{{ order.total }}</span>
+                </div>
+                <div class="order-items">
+                  @for (entry of order.items; track entry.item) {
+                    <span class="order-item-tag">{{ entry.name }} x{{ entry.quantity }}</span>
+                  }
+                </div>
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
               </div>
             }
           }
         </div>
+<<<<<<< HEAD
 
         <!-- DONE ORDERS -->
         <div class="dashboard-section">
@@ -372,6 +538,8 @@
           }
         </div>
 
+=======
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
       </div>
     </div>
   }

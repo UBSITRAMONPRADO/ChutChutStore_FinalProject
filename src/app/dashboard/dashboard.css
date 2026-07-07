@@ -24,8 +24,13 @@
   }
   
   .dashboard-logo {
+<<<<<<< HEAD
     width: 60px;
     height: 60px;
+=======
+    width: 56px;
+    height: 56px;
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
     object-fit: contain;
     border-radius: 25%;
   }
@@ -777,6 +782,7 @@
   font-size: 11px;
   color: #EA580C;
   margin: 0;
+<<<<<<< HEAD
 }
 .order-actions {
   display: flex;
@@ -833,3 +839,6 @@
 }
 .count-pill.red { background: #C1121F; }
 .count-pill.green { background: #2F8F4E; }
+=======
+}
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a

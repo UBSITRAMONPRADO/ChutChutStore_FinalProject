@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 # Chutv4
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.18.
+=======
+# Chutv2
+
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.17.
+>>>>>>> a0648fa2714f0caf46866476b36751c14cebf75a
 
 ## Development server
 
